@@ -16,6 +16,7 @@ The maximum number of steps for this environment is 1000, and this is what I hav
 <br><br>
 ##### DDPG
 [DDPG](https://arxiv.org/abs/1509.02971) is basically [DQN](https://web.stanford.edu/class/psych209/Readings/MnihEtAlHassibis15NatureControlDeepRL.pdf) for continuous action spaces. The problem with DQN is that it's doing a maximization over all possible discrete actions. This doesn't work in continuous spaces because the action space would have an infinite number of possible actions. This problem could be overcome to some extent by discretization; however, discretization is not optimal since it does not scale well and loses information. DDPG circumvents the problem by employing a different network, called an actor, to generate the best action given a certain state. Together with the state, this action is then taken as input by the critic, which outputs an expected return (Q value). Like DQN, DDPG then "forces" the Bellman equation to be true by adjusting the critic's weights such that the predicted return for the current (state, action) pair is as close as possible to the predicted return from the following (state, action) pair, as calculated by the Bellman equation. One difference between DDPG and DQN is that DDPG has a "soft update" for the target network, in which only a small proportion of the local network's weights are being copied.
+The goal of the actor network is to learn the optimal action to take in each state. It does this by directly maximizing the critic's return estimate for the current (state, action) pair.
 <br><br>
 ##### Double DDPG
 [Double DQN](https://arxiv.org/abs/1509.06461) improves on the traditional DQN by decoupling action selection and action evaluation. Double DQN proposes to use the online network for choosing the next action, and evaluate that choice with the target network. This was shown to reduce the overoptimism of Q learning and to provide usually better performance. I thought of adapting this idea to DDPG by using the **local** actor network for selecting the next actions rather than the **target** actor network.
@@ -84,3 +85,8 @@ Double DDPG resulted in 37% shorter time necessary for the agent to solve the en
 In conclusion the regular DDPG as presented in the paper does not really work that well. Actually, it doesn't seem to work at all. It is critical that the actual learning is done in "chunks", by using a refractory period after which a number of learning steps are performed. This was certainly not something I expected after reading the paper, which makes no mention of such a procedure - the soft update should be the replacement. I have not played around with these two parameters, the refractory period and the number of training steps, but there could be potential to be gained by tweaking them.
 
 I've tried the Double DQN trick, which is literally changing "target" to "local" in one line of code. This resulted in 37% reduction in training time, which is substantial.
+
+### What I learnt
+1. Don't blindly do what you find in the paper - adapt.
+2. Always record your experiments. Never lose work by pressing ctrl+c.
+3. DRL is super-sensitive to hyperparameter tuning. Use saved experiments to decide which way to go.
