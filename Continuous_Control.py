@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 import time
 
-from misc import ddpg
+from misc import ddpg, find_state_mag
 
 
 env = UnityEnvironment(
